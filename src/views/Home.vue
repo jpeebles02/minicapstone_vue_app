@@ -1,23 +1,6 @@
 <template>
   <div class="home">
     <h1>{{ message }}</h1>
-    <h1>New Product</h1>
-    <ul>
-      <li v-for="error in errors">{{ error }}</li>
-    </ul>
-    <div>
-      Name: 
-      <input type="text" v-model="newProductName" />
-      Price: 
-      <input type="text" v-model="newProductPrice" />
-      Description: 
-      <input type="text" v-model="newProductDescription" />
-      Rating:
-      <input type="text" v-model="newProductRating" />
-      Number of Products:
-      <input type="text" v-model="newNumberOfProducts" />
-    </div>
-    <button v-on:click="createProduct()">Create Product</button>
     <div v-for="product in products">
       <h2>Name: {{product.name}}</h2>
       <img v-bind:src="product.primary_image" v-bind:alt="product.name" />
@@ -65,14 +48,7 @@ export default {
     return {
       message: "Welcome to Sportr",
       products: [],
-      newProductName: "",
-      newProductPrice: "",
-      newProductDescription: "",
-      newProductRating: "",
-      newNumberOfProducts: "",
-      newProductImageUrl: "",
       currentProduct: null,
-      errors: []
     };
   },
   created: function() {
@@ -84,29 +60,10 @@ export default {
     axios.get("/api/products").then(response => {
       this.products = response.data;
       console.log(this.products[1].images[0].url);
+      console.table(this.products);
     });
   },
   methods: {
-    createProduct: function() {
-      console.log("Create the product...");
-      this.errors = [];
-      var params = {
-        name: this.newProductName,
-        price: this.newProductPrice,
-        description: this.newProductDescription,
-        rating: this.newProductRating,
-        number_of_products: this.newProductNumberOfProducts
-      };
-      axios
-        .post("/api/products", params)
-        .then(response => {
-          this.products.push(response.data);
-      })
-        .catch(error => {
-          console.log(error.response.data.errors);
-          this.errors = error.response.data.errors;
-        });
-    },
     showProduct: function(product) {
       if (this.currentProduct === product) {
         this.currentProduct = null;
