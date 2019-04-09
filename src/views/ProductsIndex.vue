@@ -3,18 +3,20 @@
     <h1>{{ message }}</h1>
     <div>
       <button v-on:click="setSortAttribute('name')">Sort by name</button>
-      <button v-on:click="setSortAttribute('price')">Sort by price(high to low)</button>
+      <button v-on:click="setSortAttribute('price')">Sort by price</button>
     </div>
     Search by Name of Price 
     <input type="text" v-model="searchFilter" list="names"/>
     <datalist id="names">
       <option v-for="product in products">{{ product.name }}</option>
     </datalist>
-    <div v-for="product in orderBy(filterBy(products, searchFilter, 'name', 'price'), sortAttribute)">
-      <h2> {{product.name}}</h2>
-      <img v-bind:src="product.primary_image" v-bind:alt="product.name" />
-      <router-link v-bind:to="`/products/${product.id}`">More info</router-link>
-    </div>
+    <transition-group appear enter-active-class="animated rollIn" leave-active-class="animated heartBeat">
+      <div v-for="product in orderBy(filterBy(products, searchFilter, 'name', 'price'), sortAttribute, sortAscending)" v-bind:key="product.id">
+        <h2> {{product.name}}</h2>
+        <img v-bind:src="product.primary_image" v-bind:alt="product.name" />
+        <router-link v-bind:to="`/products/${product.id}`">More info</router-link>
+      </div>
+  </transition-group>
   </div>
 </template>
 
@@ -35,7 +37,8 @@ export default {
       message: "Welcome to Sportr",
       products: [],
       searchFilter: "",
-      sortAttribute: "name"
+      sortAttribute: "name",
+      sortAscending: 1
     };
   },
   created: function() {
@@ -52,6 +55,15 @@ export default {
   },
   methods: {
     setSortAttribute: function(inputAttribute) {
+      if (this.sortAttribute === inputAttribute) {
+        if (this.sortAscending === 1) {
+          this.sortAscending = -1;
+        } else {
+          this.sortAscending = 1;
+        }
+      } else {
+        this.sortAscending = 1;
+      }
       this.sortAttribute = inputAttribute;
     }
   }
