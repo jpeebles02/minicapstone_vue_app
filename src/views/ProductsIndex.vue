@@ -5,18 +5,21 @@
       <button v-on:click="setSortAttribute('name')">Sort by name</button>
       <button v-on:click="setSortAttribute('price')">Sort by price</button>
     </div>
-    Search by Name of Price 
-    <input type="text" v-model="searchFilter" list="names"/>
+    Search by Name of Price
+    <input type="text" v-model="searchFilter" list="names" />
     <datalist id="names">
       <option v-for="product in products">{{ product.name }}</option>
     </datalist>
     <transition-group appear enter-active-class="animated rollIn" leave-active-class="animated heartBeat">
-      <div v-for="product in orderBy(filterBy(products, searchFilter, 'name', 'price'), sortAttribute, sortAscending)" v-bind:key="product.id">
-        <h2> {{product.name}}</h2>
+      <div
+        v-for="product in orderBy(filterBy(products, searchFilter, 'name', 'price'), sortAttribute, sortAscending)"
+        v-bind:key="product.id"
+      >
+        <h2>{{ product.name }}</h2>
         <img v-bind:src="product.primary_image" v-bind:alt="product.name" />
         <router-link v-bind:to="`/products/${product.id}`">More info</router-link>
       </div>
-  </transition-group>
+    </transition-group>
   </div>
 </template>
 
@@ -42,17 +45,17 @@ export default {
     };
   },
   created: function() {
-
-    // RUBY WEB REQUEST 
+    // RUBY WEB REQUEST
     // response = HTTP.get("/api/products")
     // @products = response.data;
-    // JAVASCRIPT WEB REQUEST 
+    // JAVASCRIPT WEB REQUEST
     axios.get("/api/products").then(response => {
       this.products = response.data;
       console.log(this.products[1].images[0].url);
       console.table(this.products);
     });
   },
+
   methods: {
     setSortAttribute: function(inputAttribute) {
       if (this.sortAttribute === inputAttribute) {
