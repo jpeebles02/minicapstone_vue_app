@@ -19,10 +19,15 @@
   height: 300px;
   text-align: initial;
 }
+body {
+  margin: 0;
+  padding: 0;
+}
 </style>
 
 <script>
 /* global mapboxgl */
+/* global mapboxSdk */
 import axios from "axios";
 
 export default {
@@ -44,6 +49,11 @@ export default {
           lat: 37.791852,
           long: -122.42127,
           description: "Bob's Donuts in SF makes gigantic donuts, good for sharing (or eating alone!)"
+        },
+        {
+          lat: 41.8921,
+          long: -87.6348,
+          description: "Actualize!)"
         }
       ]
     };

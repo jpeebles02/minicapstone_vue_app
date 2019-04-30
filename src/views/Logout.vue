@@ -1,6 +1,5 @@
 <template>
-  <div class="logout">
-  </div>
+  <div class="logout"></div>
 </template>
 
 <script>
@@ -10,6 +9,7 @@ export default {
   created: function() {
     delete axios.defaults.headers.common["Authorization"];
     localStorage.removeItem("jwt");
+    this.$emit("changeJwt");
     this.$router.push("/");
   }
 };

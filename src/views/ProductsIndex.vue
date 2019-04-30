@@ -1,6 +1,32 @@
 <template>
   <div class="home">
+    <div>
+      <multiselect v-model="value2" v-bind:options="options" v-bind:multiple="true"></multiselect>
+    </div>
     <h1>{{ message }}</h1>
+    <label>{{ selectedEvent }}</label>
+    <vue-instant
+      :suggestOnAllWords="true"
+      :suggestion-attribute="suggestionAttribute"
+      v-model="value"
+      :disabled="false"
+      @input="changed"
+      @click-input="clickInput"
+      @click-button="clickButton"
+      @selected="selected"
+      @enter="enter"
+      @key-up="keyUp"
+      @key-down="keyDown"
+      @key-right="keyRight"
+      @clear="clear"
+      @escape="escape"
+      :show-autocomplete="true"
+      :autofocus="false"
+      :suggestions="suggestions"
+      name="customName"
+      placeholder="custom placeholder"
+      type="google"
+    ></vue-instant>
     <div>
       <button v-on:click="setSortAttribute('name')">Sort by name</button>
       <button v-on:click="setSortAttribute('price')">Sort by price</button>
@@ -23,7 +49,7 @@
   </div>
 </template>
 
-<style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css">
 img {
   width: 350px;
 }
@@ -32,16 +58,30 @@ img {
 <script>
 var axios = require("axios");
 import Vue2Filters from "vue2-filters";
+import Multiselect from "vue-multiselect";
+import Vue from "vue";
+import "vue-instant/dist/vue-instant.css";
+import VueInstant from "vue-instant";
+Vue.use(VueInstant);
 
 export default {
   mixins: [Vue2Filters.mixin],
+  components: {
+    Multiselect
+  },
   data: function() {
     return {
       message: "Welcome to Sportr",
       products: [],
       searchFilter: "",
       sortAttribute: "name",
-      sortAscending: 1
+      sortAscending: 1,
+      value2: [],
+      options: ["list", "of", "options"],
+      value: "",
+      suggestionAttribute: "original_title",
+      suggestions: [],
+      selectedEvent: ""
     };
   },
   created: function() {
@@ -68,6 +108,44 @@ export default {
         this.sortAscending = 1;
       }
       this.sortAttribute = inputAttribute;
+    },
+    clickInput() {
+      this.selectedEvent = "click input";
+    },
+    clickButton() {
+      this.selectedEvent = "click button";
+    },
+    selected() {
+      this.selectedEvent = "selection changed";
+    },
+    enter() {
+      this.selectedEvent = "enter";
+    },
+    keyUp: function() {
+      this.selectedEvent = "keyup pressed";
+    },
+    keyDown: function() {
+      this.selectedEvent = "keyDown pressed";
+    },
+    keyRight: function() {
+      this.selectedEvent = "keyRight pressed";
+    },
+    clear: function() {
+      this.selectedEvent = "clear input";
+    },
+    escape: function() {
+      this.selectedEvent = "escape";
+    },
+    changed: function() {
+      var that = this;
+      this.suggestions = [];
+      axios
+        .get("https://api.themoviedb.org/3/search/movie?api_key=342d3061b70d2747a1e159ae9a7e9a36&query=" + this.value)
+        .then(function(response) {
+          response.data.results.forEach(function(a) {
+            that.suggestions.push(a);
+          });
+        });
     }
   }
 };
